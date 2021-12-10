@@ -5,19 +5,21 @@ DAPR_PLACEMENT_NAME="dapr_placement"
 DAPR_REDIS_NAME="dapr_redis"
 DAPR_ZIPKIN_NAME="dapr_zipkin"
 
+PRESTAGE_DIRECTORY='./prestaged'
+
 
 docker_remove_if_exists() {
 	if [[ -n $(docker container ls | grep $1) ]]; then
-		echo "Removing exiting docker container $1..."
+		echo -e "\nRemoving existing docker container $1..."
 		docker stop $1
 		docker rm $1
-		echo "Done"
+		echo ""
 	fi
 }
 
 
 docker_run_dapr_placement() {
-	echo "Launching dapr placement service..."
+	echo -e "\nLaunching dapr placement service..."
 	docker_remove_if_exists dapr_placement
 	docker run \
 		--name dapr_placement \
@@ -26,12 +28,11 @@ docker_run_dapr_placement() {
 		--entrypoint "./placement" \
 		-p "50005:50005" \
 		daprio/dapr:1.5.1
-	echo "Done"
 }
 
 
 docker_run_redis() {
-	echo "Launching redis service..."
+	echo -e "\nLaunching redis service..."
 	docker_remove_if_exists dapr_redis
 	docker run \
 		--name dapr_redis \
@@ -39,12 +40,11 @@ docker_run_redis() {
 		-d \
 		-p "6379:6379" \
 		redis
-	echo "Done"
 }
 
 
 docker_run_zipkin() {
-	echo "Launching zipkin service..."
+	echo -e "\nLaunching zipkin service..."
 	docker_remove_if_exists dapr_zipkin
 	docker run \
 		--name dapr_zipkin \
@@ -52,43 +52,39 @@ docker_run_zipkin() {
 		-d \
 		-p "9411:9411" \
 		openzipkin/zipkin
-	echo "Done"
 }
 
 
 install_components() {
-	echo "Installing dapr components..."
-	cp -r ./components ~/.dapr
-	cp -r config.yaml ~/.dapr
-	echo "Done"
+	echo -e "\nInstalling dapr components..."
+	cp -r ${PRESTAGE_DIRECTORY}/components ~/.dapr
+	cp ${PRESTAGE_DIRECTORY}/config.yaml ~/.dapr
 }
 
 
 install_dapr_cli() {
-	echo "Installing Dapr CLI..."
-	tar xf ./cli/dapr_linux_arm64.tar.gz -C ./cli
-	chmod o+x ./cli/dapr
-	sudo mv ./cli/dapr /usr/local/bin
+	echo -e "\nInstalling dapr CLI..."
+	tar xf ${PRESTAGE_DIRECTORY}/dapr_*.tar.gz -C ${PRESTAGE_DIRECTORY}
+	chmod o+x ${PRESTAGE_DIRECTORY}/dapr
+	sudo mv ${PRESTAGE_DIRECTORY}/dapr /usr/local/bin
 	/usr/local/bin/dapr --version
-	echo "Done"
 	echo "To get started with Dapr, please visit https://docs.dapr.io/getting-started/"
 }
 
+
 install_daprd() {
-	echo "Installing daprd..."
-        tar xf ./daprd/daprd_linux_arm64.tar.gz -C ./daprd
-        chmod o+x ./daprd/daprd
+	echo -e "\nInstalling daprd..."
+        tar xf ${PRESTAGE_DIRECTORY}/daprd_*.tar.gz -C ${PRESTAGE_DIRECTORY}
+        chmod o+x ${PRESTAGE_DIRECTORY}/daprd
 	mkdir -p ~/.dapr/bin
-        mv ./daprd/daprd ~/.dapr/bin
-	echo "Done"
+        mv ${PRESTAGE_DIRECTORY}/daprd ~/.dapr/bin
 	echo -e "Dapr runtime installed to ~/.dapr/bin, you may run the following to add it to your path if you want to run daprd directly:\nexport PATH=\$PATH:~/.dapr/bin"
 }
 
 
 run_dapr_uninstall() {
-	echo "Runing dapr uninstall..."
+	echo -e "\nRuning dapr uninstall..."
 	dapr uninstall
-	echo "Done"
 }
 
 
@@ -99,3 +95,4 @@ install_components
 docker_run_redis
 docker_run_zipkin
 docker_run_dapr_placement
+echo -e "\nDapr installed successfully"
