@@ -56,10 +56,13 @@ prepare_prestaged_directory() {
 prestage_docker_images() {
     echo ""
     docker pull daprio/dapr:${DAPR_VERSION}
+    docker save daprio/dapr:${DAPR_VERSION} -o ${PRESTAGE_DIRECTORY}/dapr_placement.tar
     echo ""
     docker pull redis:latest
+    docker save redis:latest -o ${PRESTAGE_DIRECTORY}/redis.tar
     echo ""
     docker pull openzipkin/zipkin:latest
+    docker save openzipkin/zipkin:latest -o ${PRESTAGE_DIRECTORY}/zipkin.tar
 }
 
 
