@@ -78,7 +78,7 @@ install_daprd() {
     chmod o+x ${PRESTAGE_DIRECTORY}/daprd
     mkdir -p ~/.dapr/bin
     mv ${PRESTAGE_DIRECTORY}/daprd ~/.dapr/bin
-	echo -e "Dapr runtime installed to ~/.dapr/bin, you may run the following to add it to your path if you want to run daprd directly:\nexport PATH=\$PATH:~/.dapr/bin"
+    echo -e "Dapr runtime installed to ~/.dapr/bin, you may run the following to add it to your path if you want to run daprd directly:\nexport PATH=\$PATH:~/.dapr/bin"
 }
 
 
