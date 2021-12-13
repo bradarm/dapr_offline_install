@@ -21,6 +21,7 @@ docker_remove_if_exists() {
 docker_run_dapr_placement() {
     echo -e "\nLaunching dapr placement service..."
     docker_remove_if_exists dapr_placement
+    docker load -i ${PRESTAGE_DIRECTORY}/dapr_placement.tar
     docker run \
         --name dapr_placement \
         --restart "always" \
@@ -34,6 +35,7 @@ docker_run_dapr_placement() {
 docker_run_redis() {
     echo -e "\nLaunching redis service..."
     docker_remove_if_exists dapr_redis
+    docker load -i ${PRESTAGE_DIRECTORY}/redis.tar
     docker run \
         --name dapr_redis \
         --restart "always" \
@@ -46,6 +48,7 @@ docker_run_redis() {
 docker_run_zipkin() {
     echo -e "\nLaunching zipkin service..."
     docker_remove_if_exists dapr_zipkin
+    docker load -i ${PRESTAGE_DIRECTORY}/zipkin.tar
     docker run \
         --name dapr_zipkin \
         --restart "always" \
