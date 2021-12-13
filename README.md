@@ -19,6 +19,11 @@ By default `prestage.sh` collects the latest dapr artifacts matching the executi
 bash prestage.sh -a [ARCHITECTURE] -o [OPERATING_SYSTEM] -v [DAPR_VERSION]
 ```
 
+Example:
+``` bash
+bash prestage.sh -a amd64 -o windows -v 1.5.0
+```
+
 Any argument not supplied will default to the host's architecture or operating system - or the latest dapr release in the case of the dapr version flag.
 
 All artifacts will be placed in a newly created **prestaged** directory created at the location where `prestage.sh` was executed. This behavior can be modified by editing the directory in `prestage.sh` according to your needs.
