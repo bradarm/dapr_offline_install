@@ -29,7 +29,7 @@ set_options() {
 
     if [ -z "${DAPR_VERSION}" ]; then
         dapr_release_url="https://api.github.com/repos/dapr/dapr/releases"
-        DAPR_VERSION=$(curl -s ${dapr_release_url} | grep \"tag_name\" | grep -v rc | awk 'NR==1{print $2}' |  sed -n 's/^v///\"\(.*\)\",/\1/p')
+        DAPR_VERSION=$(curl -s ${dapr_release_url} | grep \"tag_name\" | grep -v rc | awk 'NR==1{print $2}' |  sed -n 's/\"v\(.*\)\",/\1/p')
     fi
 
     case $ARCH in
