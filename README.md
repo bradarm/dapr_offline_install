@@ -13,18 +13,18 @@ The basic flow for using this package is as follows:
 
 The provided `prestage.sh` script bundles all artifacts necessary to install dapr in a disconnected environment. This includes dapr binaries, which will be downloaded from their respective dapr github repositories, docker images for the dapr placement service, redis, and zipkin - each pulled from their respective public docker image registries, and dapr component and configuration files located in this repository (see the **components** directory and `config.yaml`).
 
-By default `prestage.sh` collects the latest dapr artifacts matching the executing host's architecture and operating system, but users may optionally provide arguments to collect artifacts for a specific dapr version, architecture, and operating system.
+By default `prestage.sh` collects the latest dapr artifacts matching the executing host's architecture, but users may optionally provide arguments to collect artifacts for a specific dapr version and architecture.
 
 ``` bash
-bash prestage.sh -a [ARCHITECTURE] -o [OPERATING_SYSTEM] -v [DAPR_VERSION]
+bash prestage.sh -a [ARCHITECTURE] -v [DAPR_VERSION]
 ```
 
 Example:
 ``` bash
-bash prestage.sh -a amd64 -o windows -v 1.5.0
+bash prestage.sh -a amd64 -v 1.5.0
 ```
 
-Any argument not supplied will default to the host's architecture or operating system - or the latest dapr release in the case of the dapr version flag.
+Any argument not supplied will default to the host's architecture or the latest dapr release.
 
 All artifacts will be placed in a newly created **prestaged** directory created at the location where `prestage.sh` was executed. This behavior can be modified by editing the directory in `prestage.sh` according to your needs.
 
@@ -43,11 +43,9 @@ bash install.sh
 This package currently supports the following architectures:
 
 ```
-arm
-armv7*
 aarch64
-arm64
 amd64
+arm64
 x86_64
 ```
 
@@ -56,9 +54,7 @@ x86_64
 This package currently supports the following operating systems:
 
 ```
-darwin
 linux
-windows
 ```
 
 ## Issues and Feedback

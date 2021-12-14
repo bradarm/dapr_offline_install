@@ -19,12 +19,10 @@ get_daprd() {
 
 
 set_options() {
+    OS="linux"
+
     if [ -z "${ARCH}" ]; then
         ARCH=$(uname -m)
-    fi
-
-    if [ -z "${OS}" ]; then
-        OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
     fi
 
     if [ -z "${DAPR_VERSION}" ]; then
@@ -33,9 +31,13 @@ set_options() {
     fi
 
     case $ARCH in
-        armv7*) ARCH="arm";;
         aarch64) ARCH="arm64";;
+        amd64) ARCH="amd64";;
+        arm64) ARCH="arm64";;
         x86_64) ARCH="amd64";;
+        \?)
+            echo "Unsupported architecture: ${ARCH}"
+            exit 1;;
     esac
 
     echo -e "Prestaging dapr installation for:\n"
@@ -53,23 +55,43 @@ prepare_prestaged_directory() {
 }
 
 
-prestage_docker_images() {
+prestage_dapr_image() {
     echo ""
-    docker pull daprio/dapr:${DAPR_VERSION}
+    docker pull --platform ${OS}/${ARCH} daprio/dapr:${DAPR_VERSION}
     docker save daprio/dapr:${DAPR_VERSION} -o ${PRESTAGE_DIRECTORY}/dapr_placement.tar
+}
+
+
+prestage_redis_image () {
+    # Currently only supports linux/amd64 and linux/arm64
     echo ""
-    docker pull redis:latest
+    if [ ${OS} == "arm64" ]; then
+        docker pull --platform ${OS}/${ARCH}/v8 redis:latest
+    else  # amd64
+        docker pull --platform ${OS}/${ARCH} redis:latest
+    fi
     docker save redis:latest -o ${PRESTAGE_DIRECTORY}/redis.tar
+}
+
+
+prestage_zipkin_image () {
+    # Currently only supports linux/amd64 and linux/arm64
     echo ""
-    docker pull openzipkin/zipkin:latest
+    docker pull --platform ${OS}/${ARCH} openzipkin/zipkin:latest
     docker save openzipkin/zipkin:latest -o ${PRESTAGE_DIRECTORY}/zipkin.tar
 }
 
 
-while getopts "a:o:v:" flag; do
+prestage_docker_images() {
+    prestage_dapr_image
+    prestage_redis_image
+    prestage_zipkin_image
+}
+
+
+while getopts "a:v:" flag; do
     case ${flag} in
         a) ARCH=${OPTARG};;
-        o) OS=${OPTARG};;
         v) DAPR_VERSION=${OPTARG};;
         \?) exit 1;
     esac

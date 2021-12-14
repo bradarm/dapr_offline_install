@@ -11,8 +11,11 @@ PRESTAGE_DIRECTORY='./prestaged'
 docker_remove_if_exists() {
     if [[ -n $(docker container ls | grep $1) ]]; then
         echo -e "\nRemoving existing docker container $1..."
+        image=$(docker container ls | grep $1 | awk '{print $2}')
         docker stop $1
         docker rm $1
+        echo -e "\nRemoving ${image}..."
+        docker image rm ${image}
         echo ""
     fi
 }
