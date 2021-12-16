@@ -88,17 +88,41 @@ install_daprd() {
 }
 
 
+install_placement() {
+    echo -e "\nInstalling placement..."
+    tar xf ${PRESTAGE_DIRECTORY}/placement_*.tar.gz -C ${PRESTAGE_DIRECTORY}
+    chmod o+x ${PRESTAGE_DIRECTORY}/placement
+    mkdir -p ~/.dapr/bin
+    mv ${PRESTAGE_DIRECTORY}/placement ~/.dapr/bin
+    echo -e "Dapr placement runtime installed to ~/.dapr/bin, you may run the following to add it to your path if you want to run placement directly:\nexport PATH=\$PATH:~/.dapr/bin"
+}
+
+
 run_dapr_uninstall() {
     echo -e "\nRuning dapr uninstall..."
     dapr uninstall
 }
 
 
-install_dapr_cli
-run_dapr_uninstall
-install_daprd
-install_components
-docker_run_redis
-docker_run_zipkin
-docker_run_dapr_placement
-echo -e "\nDapr installed successfully"
+while getopts "s" flag; do
+    case ${flag} in
+        s) SLIM_INIT=true;;
+        \?) exit 1;
+    esac
+done
+
+
+if [ -n ${SLIM_INIT} ]; then
+    install_dapr_cli
+    install_daprd
+    install_placement
+else
+    install_dapr_cli
+    run_dapr_uninstall
+    install_daprd
+    install_components
+    docker_run_redis
+    docker_run_zipkin
+    docker_run_dapr_placement
+    echo -e "\nDapr installed successfully"
+fi

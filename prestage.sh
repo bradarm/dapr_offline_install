@@ -18,6 +18,12 @@ get_daprd() {
 }
 
 
+get_placement() {
+    echo -e "\nFetching https://github.com/dapr/dapr/releases/download/v${DAPR_VERSION}/placement_${OS}_${ARCH}.tar.gz..."
+    curl -L https://github.com/dapr/dapr/releases/download/v${DAPR_VERSION}/placement_${OS}_${ARCH}.tar.gz -o ${PRESTAGE_DIRECTORY}/placement_${OS}_${ARCH}.tar.gz
+}
+
+
 set_options() {
     OS="linux"
 
@@ -44,6 +50,10 @@ set_options() {
     echo -e "Architecture: ${ARCH}"
     echo -e "OS: ${OS}"
     echo -e "Dapr Version: ${DAPR_VERSION}"
+
+    if [ -n ${SLIM_INIT} ]; then
+        echo "Prestaging for Slim Init"
+    fi
 }
 
 
@@ -89,16 +99,30 @@ prestage_docker_images() {
 }
 
 
-while getopts "a:v:" flag; do
+prestage_slim_init() {
+    rm -rf ${PRESTAGE_DIRECTORY}
+    mkdir -p ${PRESTAGE_DIRECTORY}
+    get_dapr_cli
+    get_daprd
+    get_placement
+}
+
+
+while getopts "a:sv:" flag; do
     case ${flag} in
         a) ARCH=${OPTARG};;
+        s) SLIM_INIT=true;;
         v) DAPR_VERSION=${OPTARG};;
         \?) exit 1;
     esac
 done
 
 set_options
-prepare_prestaged_directory
-prestage_docker_images
-get_dapr_cli
-get_daprd
+if [ -n ${SLIM_INIT} ]; then
+    prestage_slim_init
+else
+    prepare_prestaged_directory
+    prestage_docker_images
+    get_dapr_cli
+    get_daprd
+fi
