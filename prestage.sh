@@ -36,6 +36,10 @@ set_options() {
         DAPR_VERSION=$(curl -s ${dapr_release_url} | grep \"tag_name\" | grep -v rc | awk 'NR==1{print $2}' |  sed -n 's/\"v\(.*\)\",/\1/p')
     fi
 
+    if [ -z ${SLIM_INIT} ]; then
+        SLIM_INIT=0
+    fi
+
     case $ARCH in
         aarch64) ARCH="arm64";;
         amd64) ARCH="amd64";;
@@ -50,10 +54,6 @@ set_options() {
     echo -e "Architecture: ${ARCH}"
     echo -e "OS: ${OS}"
     echo -e "Dapr Version: ${DAPR_VERSION}"
-
-    if [ -n ${SLIM_INIT} ]; then
-        echo "Prestaging for Slim Init"
-    fi
 }
 
 
@@ -100,6 +100,7 @@ prestage_docker_images() {
 
 
 prestage_slim_init() {
+    echo "Prestaging for Slim Init"
     rm -rf ${PRESTAGE_DIRECTORY}
     mkdir -p ${PRESTAGE_DIRECTORY}
     get_dapr_cli
@@ -111,14 +112,14 @@ prestage_slim_init() {
 while getopts "a:sv:" flag; do
     case ${flag} in
         a) ARCH=${OPTARG};;
-        s) SLIM_INIT=true;;
+        s) SLIM_INIT=1;;
         v) DAPR_VERSION=${OPTARG};;
         \?) exit 1;
     esac
 done
 
 set_options
-if [ -n ${SLIM_INIT} ]; then
+if [ ${SLIM_INIT} == 1 ]; then
     prestage_slim_init
 else
     prepare_prestaged_directory
