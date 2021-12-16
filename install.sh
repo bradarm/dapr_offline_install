@@ -124,5 +124,5 @@ else
     docker_run_redis
     docker_run_zipkin
     docker_run_dapr_placement
-    echo -e "\nDapr installed successfully"
 fi
+echo -e "\nDapr installed successfully"
