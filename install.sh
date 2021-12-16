@@ -106,13 +106,17 @@ run_dapr_uninstall() {
 
 while getopts "s" flag; do
     case ${flag} in
-        s) SLIM_INIT=true;;
+        s) SLIM_INIT=1;;
         \?) exit 1;
     esac
 done
 
+if [ -z ${SLIM_INIT} ]; then
+    SLIM_INIT=0
+fi
 
-if [ -n ${SLIM_INIT} ]; then
+if [ ${SLIM_INIT} == 1 ]; then
+    echo "Installing for Slim Init"
     install_dapr_cli
     install_daprd
     install_placement
