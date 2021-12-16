@@ -28,6 +28,21 @@ Any argument not supplied will default to the host's architecture or the latest 
 
 All artifacts will be placed in a newly created **prestaged** directory created at the location where `prestage.sh` was executed. This behavior can be modified by editing the directory in `prestage.sh` according to your needs.
 
+#### Slim Init Mode
+
+Additionally, this package supports pre-staging for `dapr init --slim` installations. Slim init pre-staging can be activated by supplying the `-s` argument as follows:
+
+``` bash
+bash prestage.sh -s -a [ARCHITECTURE] -v [DAPR_VERSION]
+```
+
+Example:
+``` bash
+bash prestage.sh -s -a amd64 -v 1.5.0
+```
+
+Slim init pre-staging bundles only the Dapr CLI, daprd, and placement binaries for installation.
+
 ## Installation
 
 Once dapr artifacts have been collected via `prestage.sh`, dapr can be installed to a suitable host environment by transfering **prestaged** and `install.sh` to that host. By default, `install.sh` assumes the **prestaged** directory is present in the directory that `install.sh` is being executed from. However, that can be modified by editing the directory in `install.sh` to meet your needs.
@@ -37,6 +52,16 @@ Dapr may then be installed on that host, without any network connectivity, via:
 ``` bash
 bash install.sh
 ```
+
+#### Slim Init Mode
+
+Additionally, this package supports offline installation for `dapr init --slim` installations. Assuming slim init pre-staging has occurred, slim init installation may be activated by supplying the `-s` argument as follows:
+
+``` bash
+bash install.sh -s
+```
+
+Slim init installation installs only the Dapr CLI, daprd, and placement binaries.
 
 ## Supported Architectures
 
