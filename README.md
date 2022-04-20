@@ -1,6 +1,9 @@
 # Dapr Offline Installer
 A standalone dapr installation for offline, air-gapped, or disconnected use-cases.
 
+# Deprecation Notice
+As of the Dapr 1.7 release, Dapr officially supports offline, air-gapped installations. As such, this repository will no longer be supported or maintained. Please refer to [official Dapr documentation](https://docs.dapr.io/getting-started/install-dapr-cli/) with guidance and support for manual, binary installation procedure.
+
 ## Usage
 
 The basic flow for using this package is as follows:
